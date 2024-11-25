@@ -1,0 +1,1167 @@
+1. Implementation of Stack     filename: main.java
+ 
+
+
+package prac;
+
+import java.util.Scanner;
+
+// Class representing the Stack using a Linked List
+class Stack {
+    class Node {
+        int data;
+        Node next;
+
+        // Constructor for Node
+        Node(int data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    private Node top; // Points to the top of the stack
+
+    // Constructor to initialize an empty stack
+    Stack() {
+        this.top = null;
+    }
+
+    // Method to check if the stack is empty
+    boolean isEmpty() {
+        return top == null;
+    }
+
+    // Method to push an element onto the stack
+    void push(int data) {
+        Node newNode = new Node(data);
+        newNode.next = top; // Link new node to the current top
+        top = newNode;      // Update top to the new node
+        System.out.println(data + " pushed onto the stack.");
+    }
+
+    // Method to pop an element from the stack
+    int pop() {
+        if (isEmpty()) {
+            System.out.println("The stack is empty. Cannot pop element.");
+            return -1; // Return -1 to signify an empty stack
+        }
+        int poppedData = top.data; // Get data of the top element
+        top = top.next;            // Update top to the next node
+        System.out.println("Popped element: " + poppedData);
+        return poppedData;
+    }
+
+    // Method to peek at the top element of the stack
+    int peek() {
+        if (isEmpty()) {
+            System.out.println("The stack is empty.");
+            return -1; // Return -1 to signify an empty stack
+        }
+        return top.data;
+    }
+
+    // Method to display all elements in the stack
+    void display() {
+        if (isEmpty()) {
+            System.out.println("The stack is empty.");
+        } else {
+            System.out.println("Stack elements (top to bottom):");
+            Node temp = top;
+            while (temp != null) {
+                System.out.println(temp.data);
+                temp = temp.next;
+            }
+        }
+    }
+}
+
+// Main class to demonstrate stack operations
+public class Main {
+    public static void main(String[] args) {
+        Stack stack = new Stack(); // Create a stack instance
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("\n--- Menu ---");
+            System.out.println("1. Push element");
+            System.out.println("2. Pop element");
+            System.out.println("3. Peek element");
+            System.out.println("4. Display stack");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1 -> {
+                    System.out.print("Enter the data to push: ");
+                    int data = scanner.nextInt();
+                    stack.push(data);
+                }
+                case 2 -> stack.pop();
+                case 3 -> {
+                    int topElement = stack.peek();
+                    if (topElement != -1) {
+                        System.out.println("The topmost element in the stack is: " + topElement);
+                    }
+                }
+                case 4 -> stack.display();
+                case 5 -> System.out.println("Exiting program.");
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 5);
+
+        scanner.close(); // Close scanner to prevent resource leaks
+    }
+}
+
+
+
+
+
+2. Conversation    filename: main2.java
+
+
+
+package prac;
+import java.util.Stack;
+import java.util.Scanner;
+
+public class Main2 {
+    
+    // Function to return precedence of operators
+    public static int precedence(char operator) {
+        if (operator == '+' || operator == '-') {
+            return 1;
+        } else if (operator == '*' || operator == '/') {
+            return 2;
+        } else {
+            return 0;
+        }
+    }
+
+    // Function to convert infix expression to postfix
+    public static String infixToPostfix(String expression) {
+        Stack<Character> stack = new Stack<>();
+        StringBuilder postfix = new StringBuilder();
+        
+        for (int i = 0; i < expression.length(); i++) {
+            char currentChar = expression.charAt(i);
+            
+            // Skip spaces
+            if (currentChar == ' ') {
+                continue;
+            }
+            
+            // If current character is operand (a variable, letter, or digit), add it to the postfix expression
+            if (Character.isLetterOrDigit(currentChar)) {
+                postfix.append(currentChar);
+            } 
+            // If current character is '(', push it to the stack
+            else if (currentChar == '(') {
+                stack.push(currentChar);
+            }
+            // If current character is ')', pop from stack and add to postfix until '(' is encountered
+            else if (currentChar == ')') {
+                while (!stack.isEmpty() && stack.peek() != '(') {
+                    postfix.append(stack.pop());
+                }
+                stack.pop();  // Remove '(' from stack
+            }
+            // If the current character is an operator
+            else {
+                while (!stack.isEmpty() && precedence(stack.peek()) >= precedence(currentChar)) {
+                    postfix.append(stack.pop());
+                }
+                stack.push(currentChar);
+            }
+        }
+        
+        // Pop any remaining operators from the stack
+        while (!stack.isEmpty()) {
+            postfix.append(stack.pop());
+        }
+        
+        return postfix.toString();
+    }
+
+    public static void main(String[] args) {
+        // Create a scanner object to take input from the user
+        Scanner scanner = new Scanner(System.in);
+        
+        // Prompt the user to enter an infix expression
+        System.out.print("Enter an infix expression: ");
+        String infixExpression = scanner.nextLine();
+        
+        // Validate input (only allow valid characters)
+        if (!infixExpression.matches("[a-zA-Z0-9+\\-*/^() ]+")) {
+            System.out.println("Invalid characters in expression. Please use only letters, digits, and operators (+, -, *, /, ^, parentheses).");
+            return;
+        }
+        
+        // Convert the infix expression to postfix
+        String postfixExpression = infixToPostfix(infixExpression);
+        
+        // Display the result
+        System.out.println("Postfix Expression: " + postfixExpression);
+        
+        // Close the scanner
+        scanner.close();
+    }
+}
+
+
+
+
+3. Queue pizza    file name: main3.java
+
+
+package prac2;
+import java.util.Scanner;
+
+class PizzaParlour {
+    // Circular Queue implementation
+    private String[] queue;
+    private int front, rear, size, capacity;
+
+    // Constructor to initialize the queue
+    public PizzaParlour(int capacity) {
+        this.capacity = capacity;
+        this.queue = new String[capacity];
+        this.front = this.rear = -1;
+        this.size = 0;
+    }
+
+    // Method to check if the queue is full
+    public boolean isFull() {
+        return size == capacity;
+    }
+
+    // Method to check if the queue is empty
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    // Method to add an order to the queue (enqueue)
+    public void addOrder(String order) {
+        if (isFull()) {
+            System.out.println("Queue is full. Cannot accept new orders.");
+        } else {
+            if (front == -1) {
+                front = 0;  // First order
+            }
+            rear = (rear + 1) % capacity;  // Circular increment
+            queue[rear] = order;
+            size++;
+            System.out.println("Order placed: " + order);
+        }
+    }
+
+    // Method to serve an order from the queue (dequeue)
+    public void serveOrder() {
+        if (isEmpty()) {
+            System.out.println("No orders to serve.");
+        } else {
+            System.out.println("Serving order: " + queue[front]);
+            front = (front + 1) % capacity;  // Circular increment
+            size--;
+        }
+    }
+
+    // Method to display the current orders in the queue
+    public void displayOrders() {
+        if (isEmpty()) {
+            System.out.println("No orders in the queue.");
+        } else {
+            System.out.println("Current orders in the queue:");
+            int i = front;
+            for (int j = 0; j < size; j++) {
+                System.out.println(queue[i]);
+                i = (i + 1) % capacity;  // Circular increment
+            }
+        }
+    }
+}
+
+public class Main3 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the maximum number of orders the pizza parlour can accept: ");
+        int maxOrders = scanner.nextInt();
+        scanner.nextLine(); // To consume the newline character after the number input
+
+        PizzaParlour parlour = new PizzaParlour(maxOrders);
+
+        while (true) {
+            System.out.println("\nPizza Parlour Menu:");
+            System.out.println("1. Place Order");
+            System.out.println("2. Serve Order");
+            System.out.println("3. View Orders");
+            System.out.println("4. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // To consume the newline character
+
+            switch (choice) {
+                case 1:
+                    if (!parlour.isFull()) {
+                        System.out.print("Enter the order details: ");
+                        String order = scanner.nextLine();
+                        parlour.addOrder(order);
+                    } else {
+                        System.out.println("Sorry, the pizza parlour is full. No more orders can be accepted.");
+                    }
+                    break;
+                case 2:
+                    parlour.serveOrder();
+                    break;
+                case 3:
+                    parlour.displayOrders();
+                    break;
+                case 4:
+                    System.out.println("Exiting the program.");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
+
+
+
+
+4.  insert contact,delete,update     file name: PhoneBookApp
+
+
+
+
+package prac;
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+// Contact class to hold contact details
+class Contact {
+    String name;
+    String phoneNumber;
+
+    // Constructor to initialize a contact
+    public Contact(String name, String phoneNumber) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + ", Phone Number: " + phoneNumber;
+    }
+}
+
+// TreeNode class to represent each node in the BST
+class TreeNode {
+    Contact contact;
+    TreeNode left, right;
+
+    public TreeNode(Contact contact) {
+        this.contact = contact;
+        this.left = this.right = null;
+    }
+}
+
+// PhoneBook class (BST implementation)
+class PhoneBook {
+    private TreeNode root;
+
+    public PhoneBook() {
+        root = null;
+    }
+
+    // Insert a new contact into the tree
+    public void insert(Contact contact) {
+        root = insertRec(root, contact);
+    }
+
+    // Helper function to insert a contact recursively
+    private TreeNode insertRec(TreeNode root, Contact contact) {
+        if (root == null) {
+            return new TreeNode(contact);
+        }
+
+        // Compare names for BST property
+        if (contact.name.compareTo(root.contact.name) < 0) {
+            root.left = insertRec(root.left, contact);
+        } else if (contact.name.compareTo(root.contact.name) > 0) {
+            root.right = insertRec(root.right, contact);
+        }
+
+        return root;
+    }
+
+    // Search for a contact by name
+    public Contact search(String name) {
+        return searchRec(root, name);
+    }
+
+    // Helper function to search for a contact recursively
+    private Contact searchRec(TreeNode root, String name) {
+        if (root == null) {
+            return null;
+        }
+
+        if (name.equals(root.contact.name)) {
+            return root.contact;
+        }
+
+        if (name.compareTo(root.contact.name) < 0) {
+            return searchRec(root.left, name);
+        } else {
+            return searchRec(root.right, name);
+        }
+    }
+
+    // Update the phone number of a contact
+    public boolean update(String name, String newPhoneNumber) {
+        Contact contact = search(name);
+        if (contact != null) {
+            contact.phoneNumber = newPhoneNumber;
+            return true;
+        }
+        return false;
+    }
+
+    // Delete a contact from the tree
+    public boolean delete(String name) {
+        if (search(name) == null) {
+            return false;
+        }
+        root = deleteRec(root, name);
+        return true;
+    }
+
+    // Helper function to delete a contact recursively
+    private TreeNode deleteRec(TreeNode root, String name) {
+        if (root == null) {
+            return null;
+        }
+
+        if (name.compareTo(root.contact.name) < 0) {
+            root.left = deleteRec(root.left, name);
+        } else if (name.compareTo(root.contact.name) > 0) {
+            root.right = deleteRec(root.right, name);
+        } else {
+            // Node with one or no child
+            if (root.left == null) {
+                return root.right;
+            } else if (root.right == null) {
+                return root.left;
+            }
+
+            // Node with two children: Get inorder successor
+            root.contact = minValue(root.right);
+            root.right = deleteRec(root.right, root.contact.name);
+        }
+
+        return root;
+    }
+
+    // Get the contact with the minimum value (used for deletion)
+    private Contact minValue(TreeNode root) {
+        Contact minValue = root.contact;
+        while (root.left != null) {
+            root = root.left;
+            minValue = root.contact;
+        }
+        return minValue;
+    }
+
+    // Print the contacts in order
+    public void printInOrder() {
+        printInOrderRec(root);
+    }
+
+    private void printInOrderRec(TreeNode root) {
+        if (root != null) {
+            printInOrderRec(root.left);
+            System.out.println(root.contact);
+            printInOrderRec(root.right);
+        }
+    }
+}
+
+// Main class to interact with the user
+public class PhoneBookApp {
+    public static void main(String[] args) {
+        try (Scanner scanner = new Scanner(System.in)) {
+            PhoneBook phoneBook = new PhoneBook();
+
+            while (true) {
+                System.out.println("\nPhone Book Application:");
+                System.out.println("1. Add Contact");
+                System.out.println("2. Search Contact");
+                System.out.println("3. Update Contact");
+                System.out.println("4. Delete Contact");
+                System.out.println("5. Display All Contacts");
+                System.out.println("6. Exit");
+                System.out.print("Enter your choice: ");
+
+                try {
+                    int choice = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline character
+
+                    switch (choice) {
+                        case 1:
+                            System.out.print("Enter name: ");
+                            String name = scanner.nextLine();
+                            System.out.print("Enter phone number: ");
+                            String phoneNumber = scanner.nextLine();
+                            phoneBook.insert(new Contact(name, phoneNumber));
+                            System.out.println("Contact added.\n");
+                            break;
+
+                        case 2:
+                            System.out.print("Enter name to search: ");
+                            name = scanner.nextLine();
+                            Contact contact = phoneBook.search(name);
+                            if (contact != null) {
+                                System.out.println("Found: " + contact + "\n");
+                            } else {
+                                System.out.println("Contact not found.\n");
+                            }
+                            break;
+
+                        case 3:
+                            System.out.print("Enter name to update: ");
+                            name = scanner.nextLine();
+                            System.out.print("Enter new phone number: ");
+                            phoneNumber = scanner.nextLine();
+                            boolean updated = phoneBook.update(name, phoneNumber);
+                            if (updated) {
+                                System.out.println("Contact updated.\n");
+                            } else {
+                                System.out.println("Contact not found.\n");
+                            }
+                            break;
+
+                        case 4:
+                            System.out.print("Enter name to delete: ");
+                            name = scanner.nextLine();
+                            boolean deleted = phoneBook.delete(name);
+                            if (deleted) {
+                                System.out.println("Contact deleted.\n");
+                            } else {
+                                System.out.println("Contact not found.\n");
+                            }
+                            break;
+
+                        case 5:
+                            System.out.println("All Contacts:");
+                            phoneBook.printInOrder();
+                            System.out.println();
+                            break;
+
+                        case 6:
+                            System.out.println("Exiting...");
+                            return;
+
+                        default:
+                            System.out.println("Invalid choice. Please try again.\n");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input. Please enter a number between 1 and 6.\n");
+                    scanner.nextLine(); // Clear the invalid input
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+5. Inorder                 Filename: inorderTraversal
+
+
+
+
+
+package prac;
+import java.util.Scanner;
+
+class Node {
+    int data;
+    Node left, right;
+    boolean isLeftThread, isRightThread;
+
+    public Node(int data) {
+        this.data = data;
+        this.left = this.right = null;
+        this.isLeftThread = this.isRightThread = false;
+    }
+}
+
+class ThreadedBinaryTree {
+    private Node root;
+
+    public void insert(int data) {
+        root = insertNode(root, data, null);
+    }
+
+    private Node insertNode(Node current, int data, Node parent) {
+        if (current == null) {
+            Node newNode = new Node(data);
+            if (parent != null) {
+                if (data < parent.data) {
+                    newNode.left = parent.left;
+                    newNode.right = parent;
+                    newNode.isLeftThread = true;
+                    newNode.isRightThread = true;
+                } else {
+                    newNode.left = parent;
+                    newNode.right = parent.right;
+                    newNode.isLeftThread = true;
+                    newNode.isRightThread = true;
+                }
+            }
+            return newNode;
+        }
+        if (data < current.data) {
+            if (current.isLeftThread) {
+                current.left = insertNode(null, data, current);
+                current.isLeftThread = false;
+            } else {
+                current.left = insertNode(current.left, data, current);
+            }
+        } else if (data > current.data) {
+            if (current.isRightThread) {
+                current.right = insertNode(null, data, current);
+                current.isRightThread = false;
+            } else {
+                current.right = insertNode(current.right, data, current);
+            }
+        }
+        return current;
+    }
+
+    public void inorderTraversal() {
+        if (root == null) {
+            System.out.println("Tree is empty.");
+            return;
+        }
+        Node current = leftMost(root);
+        while (current != null) {
+            System.out.print(current.data + " ");
+            if (current.isRightThread) {
+                current = current.right;
+            } else {
+                current = leftMost(current.right);
+            }
+        }
+        System.out.println();
+    }
+
+    private Node leftMost(Node node) {
+        if (node == null) return null;
+        while (!node.isLeftThread) {
+            node = node.left;
+        }
+        return node;
+    }
+}
+
+public class inorderTraversal {
+    public static void main(String[] args) {
+        ThreadedBinaryTree tbt = new ThreadedBinaryTree();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\n--- Threaded Binary Tree Operations ---");
+            System.out.println("1. Insert");
+            System.out.println("2. Display Inorder Traversal");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter a number to insert: ");
+                    int data = scanner.nextInt();
+                    tbt.insert(data);
+                    System.out.println("Inserted " + data + " into the tree.");
+                    break;
+                case 2:
+                    System.out.println("Inorder Traversal:");
+                    tbt.inorderTraversal();
+                    break;
+                case 3:
+                    System.out.println("Exiting program. Goodbye!");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+        }
+    }
+}
+
+
+
+
+
+6. Prims filename: PrimMST     output: give space while giving input
+
+
+
+package prac;
+
+import java.util.*;
+
+public class PrimMST {
+
+    // A class to represent an edge between two nodes
+    static class Edge implements Comparable<Edge> {
+        int node;
+        int weight;
+
+        Edge(int node, int weight) {
+            this.node = node;
+            this.weight = weight;
+        }
+
+        @Override
+        public int compareTo(Edge other) {
+            return this.weight - other.weight; // Compare edges by weight
+        }
+    }
+
+    public static void primMST(int[][] graph, int V) {
+        // Array to track if a node is included in MST
+        boolean[] inMST = new boolean[V];
+
+        // Priority Queue to get the minimum weight edge at each step
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+
+        // Start from the first node (0)
+        pq.add(new Edge(0, 0)); // Add the starting node with 0 weight
+
+        // To store the total cost of MST
+        int totalCost = 0;
+
+        // To track the MST edges
+        List<String> mstEdges = new ArrayList<>();
+
+        while (!pq.isEmpty()) {
+            Edge current = pq.poll();
+
+            int u = current.node;
+            int weight = current.weight;
+
+            // If the node is already in the MST, skip it
+            if (inMST[u]) {
+                continue;
+            }
+
+            // Include this node in MST
+            inMST[u] = true;
+            totalCost += weight;
+
+            // Add the edge to the MST list (ignore the starting node edge with weight 0)
+            if (weight != 0) {
+                mstEdges.add(u + " (Weight: " + weight + ")");
+            }
+
+            // Add all adjacent edges of the current node to the priority queue
+            for (int v = 0; v < V; v++) {
+                if (!inMST[v] && graph[u][v] != 0) { // Check for valid edge
+                    pq.add(new Edge(v, graph[u][v]));
+                }
+            }
+        }
+
+        // Print the MST edges and total cost
+        System.out.println("Edges in the Minimum Spanning Tree:");
+        for (String edge : mstEdges) {
+            System.out.println(edge);
+        }
+
+        System.out.println("Total Cost of Construction: " + totalCost);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Take user input for number of vertices
+        System.out.println("Enter the number of cities (vertices): ");
+        int V = sc.nextInt();
+
+        // Initialize the adjacency matrix
+        int[][] graph = new int[V][V];
+
+        System.out.println("Enter the adjacency matrix (enter 0 for no edge): ");
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                graph[i][j] = sc.nextInt();
+            }
+        }
+
+        // Call Prim's algorithm
+        primMST(graph, V);
+
+        sc.close();
+    }
+}
+
+
+
+
+
+7.   Kruskals   FileName:KruskalsAlgorithm   output: must be less than city-1
+
+
+
+
+
+package prac;
+
+import java.util.*;
+
+//Class to represent an edge in the graph
+class Edge implements Comparable<Edge> {
+ int source, destination, weight;
+
+ public Edge(int source, int destination, int weight) {
+     this.source = source;
+     this.destination = destination;
+     this.weight = weight;
+ }
+
+ // Sort edges by weight
+ @Override
+ public int compareTo(Edge other) {
+     return this.weight - other.weight;
+ }
+}
+//Class to represent a subset for union-find
+class Subset {
+ int parent, rank;
+}
+
+public class KruskalsAlgorithm {
+
+ // Function to find the parent of a node (with path compression)
+ private static int find(Subset[] subsets, int node) {
+     if (subsets[node].parent != node) {
+         subsets[node].parent = find(subsets, subsets[node].parent);
+     }
+     return subsets[node].parent;
+ }
+
+ // Function to perform union of two subsets
+ private static void union(Subset[] subsets, int root1, int root2) {
+     if (subsets[root1].rank < subsets[root2].rank) {
+         subsets[root1].parent = root2;
+     } else if (subsets[root1].rank > subsets[root2].rank) {
+         subsets[root2].parent = root1;
+     } else {
+         subsets[root2].parent = root1;
+         subsets[root1].rank++;
+     }
+ }
+
+ // Kruskal's algorithm to construct MST
+ public static void kruskalMST(int vertices, List<Edge> edges) {
+     // Sort all edges in ascending order of weight
+     Collections.sort(edges);
+
+     // Allocate memory for subsets
+     Subset[] subsets = new Subset[vertices];
+     for (int i = 0; i < vertices; i++) {
+         subsets[i] = new Subset();
+         subsets[i].parent = i;
+         subsets[i].rank = 0;
+     }
+
+     List<Edge> mst = new ArrayList<>();
+     int mstCost = 0;
+
+     for (Edge edge : edges) {
+         int root1 = find(subsets, edge.source);
+         int root2 = find(subsets, edge.destination);
+
+         // If including this edge does not form a cycle
+         if (root1 != root2) {
+             mst.add(edge); // Add edge to MST
+             mstCost += edge.weight;
+             union(subsets, root1, root2);
+         }
+     }
+
+     // Print MST and total cost
+     System.out.println("Edges in the Minimum Spanning Tree:");
+     for (Edge edge : mst) {
+         System.out.println(edge.source + " - " + edge.destination + " : " + edge.weight);
+     }
+     System.out.println("Total cost of MST: " + mstCost);
+ }
+
+ public static void main(String[] args) {
+     Scanner scanner = new Scanner(System.in);
+
+     System.out.println("Enter the number of cities (vertices):");
+     int vertices = scanner.nextInt();
+
+     System.out.println("Enter the number of roads (edges):");
+     int edgesCount = scanner.nextInt();
+
+     List<Edge> edges = new ArrayList<>();
+
+     System.out.println("Enter the roads (source, destination, weight):");
+     for (int i = 0; i < edgesCount; i++) {
+         int source = scanner.nextInt();
+         int destination = scanner.nextInt();
+         int weight = scanner.nextInt();
+         
+         // Validate source and destination indices
+         if (source < 0 || source >= vertices || destination < 0 || destination >= vertices) {
+             System.out.println("Invalid edge: source and destination must be between 0 and " + (vertices - 1));
+             i--; // Repeat this iteration to get a valid edge
+             continue;
+         }
+
+         edges.add(new Edge(source, destination, weight));
+     }
+
+     kruskalMST(vertices, edges);
+
+     scanner.close();
+ }
+}
+
+
+
+
+
+8. Dijkstra    Name: DijkstraAlgorithm 
+
+
+
+package prac;
+
+import java.util.*;
+
+//Main class for Dijkstra's Algorithm
+public class DijkstraAlgorithm {
+
+ // Nested static class to represent a Node in the priority queue
+ static class Node implements Comparable<Node> {
+     int vertex, weight;
+
+     public Node(int vertex, int weight) {
+         this.vertex = vertex;
+         this.weight = weight;
+     }
+
+     @Override
+     public int compareTo(Node other) {
+         return this.weight - other.weight; // Min-heap based on weight
+     }
+ }
+
+ // Function to find the shortest paths using Dijkstra's algorithm
+ public static void dijkstra(int vertices, List<List<Node>> graph, int source) {
+     int[] distances = new int[vertices]; // Stores shortest distances from source
+     Arrays.fill(distances, Integer.MAX_VALUE); // Initialize all distances to infinity
+     distances[source] = 0; // Distance to the source itself is 0
+
+     PriorityQueue<Node> pq = new PriorityQueue<>();
+     pq.add(new Node(source, 0));
+
+     boolean[] visited = new boolean[vertices]; // Tracks visited nodes
+
+     while (!pq.isEmpty()) {
+         Node currentNode = pq.poll();
+         int currentVertex = currentNode.vertex;
+
+         // Skip if already visited
+         if (visited[currentVertex]) continue;
+         visited[currentVertex] = true;
+
+         // Traverse all neighbors of the current node
+         for (Node neighbor : graph.get(currentVertex)) {
+             int neighborVertex = neighbor.vertex;
+             int edgeWeight = neighbor.weight;
+
+             // Relaxation: check if a shorter path is found
+             if (!visited[neighborVertex] && distances[currentVertex] + edgeWeight < distances[neighborVertex]) {
+                 distances[neighborVertex] = distances[currentVertex] + edgeWeight;
+                 pq.add(new Node(neighborVertex, distances[neighborVertex]));
+             }
+         }
+     }
+
+     // Print the shortest distances from the source
+     System.out.println("Shortest distances from source " + source + ":");
+     for (int i = 0; i < vertices; i++) {
+         System.out.println("To " + i + " : " + (distances[i] == Integer.MAX_VALUE ? "Unreachable" : distances[i]));
+     }
+ }
+
+ public static void main(String[] args) {
+     Scanner scanner = new Scanner(System.in);
+
+     System.out.println("Enter the number of locations (vertices):");
+     int vertices = scanner.nextInt();
+
+     System.out.println("Enter the number of roads (edges):");
+     int edges = scanner.nextInt();
+
+     // Create a graph as an adjacency list
+     List<List<Node>> graph = new ArrayList<>();
+     for (int i = 0; i < vertices; i++) {
+         graph.add(new ArrayList<>());
+     }
+
+     System.out.println("Enter the roads (source, destination, distance):");
+     for (int i = 0; i < edges; i++) {
+         int source = scanner.nextInt();
+         int destination = scanner.nextInt();
+         int distance = scanner.nextInt();
+
+         // Add edges to the graph (undirected graph)
+         graph.get(source).add(new Node(destination, distance));
+         graph.get(destination).add(new Node(source, distance));
+     }
+
+     System.out.println("Enter the source location:");
+     int source = scanner.nextInt();
+
+     // Find the shortest paths using Dijkstra's algorithm
+     dijkstra(vertices, graph, source);
+
+     scanner.close();
+ }
+}
+
+
+
+
+9.  max and min marks students(using minheap)   filename: MinHeapMarks
+
+
+
+
+
+package prac;
+
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class MinHeapMarks {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Input the number of students
+        System.out.println("Enter the number of students:");
+        int numStudents = scanner.nextInt();
+
+        if (numStudents <= 0) {
+            System.out.println("Number of students must be greater than 0.");
+            return;
+        }
+
+        // Priority Queue for Min Heap
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+
+        // To find maximum marks, use a variable
+        int maxMarks = Integer.MIN_VALUE;
+
+        System.out.println("Enter the marks obtained by students:");
+        for (int i = 0; i < numStudents; i++) {
+            int marks = scanner.nextInt();
+
+            // Add marks to the Min Heap
+            minHeap.add(marks);
+
+            // Update maximum marks
+            if (marks > maxMarks) {
+                maxMarks = marks;
+            }
+        }
+
+        // The minimum marks is the root of the Min Heap
+        int minMarks = minHeap.peek();
+
+        // Display the results
+        System.out.println("Maximum marks obtained: " + maxMarks);
+        System.out.println("Minimum marks obtained: " + minMarks);
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+
+10. min and max marks of students (using Max Heap)   Filename: MaxHeapMarks
+
+
+
+package prac;
+
+import java.util.Collections;
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class MaxHeapMarks {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Input the number of students
+        System.out.println("Enter the number of students:");
+        int numStudents = scanner.nextInt();
+
+        if (numStudents <= 0) {
+            System.out.println("Number of students must be greater than 0.");
+            return;
+        }
+
+        // Priority Queue for Max Heap
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+
+        // Variable to track minimum marks
+        int minMarks = Integer.MAX_VALUE;
+
+        System.out.println("Enter the marks obtained by students:");
+        for (int i = 0; i < numStudents; i++) {
+            int marks = scanner.nextInt();
+
+            // Add marks to the Max Heap
+            maxHeap.add(marks);
+
+            // Update minimum marks
+            if (marks < minMarks) {
+                minMarks = marks;
+            }
+        }
+
+        // The maximum marks is the root of the Max Heap
+        int maxMarks = maxHeap.peek();
+
+        // Display the results
+        System.out.println("Maximum marks obtained: " + maxMarks);
+        System.out.println("Minimum marks obtained: " + minMarks);
+
+        scanner.close();
+    }
+}
+
+
