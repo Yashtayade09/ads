@@ -1,0 +1,49 @@
+//MinHeapMarks
+package prac;
+
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class MinHeapMarks {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+       
+        System.out.println("Enter the number of students:");
+        int numStudents = scanner.nextInt();
+
+        if (numStudents <= 0) {
+            System.out.println("Number of students must be greater than 0.");
+            return;
+        }
+
+        
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+
+     
+        int maxMarks = Integer.MIN_VALUE;
+
+        System.out.println("Enter the marks obtained by students:");
+        for (int i = 0; i < numStudents; i++) {
+            int marks = scanner.nextInt();
+
+            
+            minHeap.add(marks);
+
+           
+            if (marks > maxMarks) {
+                maxMarks = marks;
+            }
+        }
+
+      
+        int minMarks = minHeap.peek();
+
+     
+        System.out.println("Maximum marks obtained: " + maxMarks);
+        System.out.println("Minimum marks obtained: " + minMarks);
+
+        scanner.close();
+    }
+}

@@ -1,0 +1,114 @@
+//main3
+package prac;
+import java.util.Scanner;
+
+class PizzaParlour {
+    
+    private String[] queue;
+    private int front, rear, size, capacity;
+
+   
+    public PizzaParlour(int capacity) {
+        this.capacity = capacity;
+        this.queue = new String[capacity];
+        this.front = this.rear = -1;
+        this.size = 0;
+    }
+
+   
+    public boolean isFull() {
+        return size == capacity;
+    }
+
+    
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+  
+    public void addOrder(String order) {
+        if (isFull()) {
+            System.out.println("Queue is full. Cannot accept new orders.");
+        } else {
+            if (front == -1) {
+                front = 0;  
+            }
+            rear = (rear + 1) % capacity;  
+            queue[rear] = order;
+            size++;
+            System.out.println("Order placed: " + order);
+        }
+    }
+
+    
+    public void serveOrder() {
+        if (isEmpty()) {
+            System.out.println("No orders to serve.");
+        } else {
+            System.out.println("Serving order: " + queue[front]);
+            front = (front + 1) % capacity;  
+            size--;
+        }
+    }
+
+   
+    public void displayOrders() {
+        if (isEmpty()) {
+            System.out.println("No orders in the queue.");
+        } else {
+            System.out.println("Current orders in the queue:");
+            int i = front;
+            for (int j = 0; j < size; j++) {
+                System.out.println(queue[i]);
+                i = (i + 1) % capacity;  
+            }
+        }
+    }
+}
+
+public class Main3 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the maximum number of orders the pizza parlour can accept: ");
+        int maxOrders = scanner.nextInt();
+        scanner.nextLine();
+
+        PizzaParlour parlour = new PizzaParlour(maxOrders);
+
+        while (true) {
+            System.out.println("\nPizza Parlour Menu:");
+            System.out.println("1. Place Order");
+            System.out.println("2. Serve Order");
+            System.out.println("3. View Orders");
+            System.out.println("4. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();  
+
+            switch (choice) {
+                case 1:
+                    if (!parlour.isFull()) {
+                        System.out.print("Enter the order details: ");
+                        String order = scanner.nextLine();
+                        parlour.addOrder(order);
+                    } else {
+                        System.out.println("Sorry, the pizza parlour is full. No more orders can be accepted.");
+                    }
+                    break;
+                case 2:
+                    parlour.serveOrder();
+                    break;
+                case 3:
+                    parlour.displayOrders();
+                    break;
+                case 4:
+                    System.out.println("Exiting the program.");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}

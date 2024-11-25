@@ -1,0 +1,99 @@
+//PrimMST
+package prac;
+
+import java.util.*;
+
+public class PrimMST {
+
+    
+    static class Edge implements Comparable<Edge> {
+        int node;
+        int weight;
+
+        Edge(int node, int weight) {
+            this.node = node;
+            this.weight = weight;
+        }
+
+        @Override
+        public int compareTo(Edge other) {
+            return this.weight - other.weight; 
+        }
+    }
+
+    public static void primMST(int[][] graph, int V) {
+        
+        boolean[] inMST = new boolean[V];
+
+        
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+
+        
+        pq.add(new Edge(0, 0)); 
+
+        
+        int totalCost = 0;
+
+        
+        List<String> mstEdges = new ArrayList<>();
+
+        while (!pq.isEmpty()) {
+            Edge current = pq.poll();
+
+            int u = current.node;
+            int weight = current.weight;
+
+           
+            if (inMST[u]) {
+                continue;
+            }
+
+            
+            inMST[u] = true;
+            totalCost += weight;
+
+            
+            if (weight != 0) {
+                mstEdges.add(u + " (Weight: " + weight + ")");
+            }
+
+            
+            for (int v = 0; v < V; v++) {
+                if (!inMST[v] && graph[u][v] != 0) { 
+                    pq.add(new Edge(v, graph[u][v]));
+                }
+            }
+        }
+
+        
+        System.out.println("Edges in the Minimum Spanning Tree:");
+        for (String edge : mstEdges) {
+            System.out.println(edge);
+        }
+
+        System.out.println("Total Cost of Construction: " + totalCost);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        
+        System.out.println("Enter the number of cities (vertices): ");
+        int V = sc.nextInt();
+
+        
+        int[][] graph = new int[V][V];
+
+        System.out.println("Enter the adjacency matrix (enter 0 for no edge): ");
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                graph[i][j] = sc.nextInt();
+            }
+        }
+
+       
+        primMST(graph, V);
+
+        sc.close();
+    }
+}
