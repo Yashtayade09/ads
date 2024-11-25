@@ -30,11 +30,15 @@ class ThreadedBinaryTree {
                     newNode.right = parent;
                     newNode.isLeftThread = true;
                     newNode.isRightThread = true;
+                    parent.left = newNode;
+                    parent.isLeftThread = false;
                 } else {
                     newNode.left = parent;
                     newNode.right = parent.right;
                     newNode.isLeftThread = true;
                     newNode.isRightThread = true;
+                    parent.right = newNode;
+                    parent.isRightThread = false;
                 }
             }
             return newNode;
@@ -76,7 +80,7 @@ class ThreadedBinaryTree {
 
     private Node leftMost(Node node) {
         if (node == null) return null;
-        while (!node.isLeftThread) {
+        while (node.left != null && !node.isLeftThread) {
             node = node.left;
         }
         return node;
